@@ -17,18 +17,22 @@
 </script>
 
 <div
-  class="flex items-center justify-center min-h-[calc(100vh-10px)] w-[calc(100vw-10px)] bg-[#f2f4f8]"
+  class="flex items-center justify-center min-h-screen w-full bg-[#f2f4f8] p-2 sm:p-4"
 >
   <div
-    class="min-h-[70vh] max-w-7xl flex sm:w-[90%] md:w-[80%] lg:w-[70%] mx-auto rounded-lg overflow-hidden shadow-lg"
+    class="w-full max-w-7xl flex flex-col md:flex-row md:h-[70vh] mx-auto rounded-lg overflow-hidden shadow-lg"
   >
     <!-- Left side - Blue section with logo and text -->
-    <div class="flex-1 bg-[#4990c0] text-white p-8 flex flex-col">
-      <div class="mb-12 mt-8">
-        <div class="inline-block bg-white text-black py-2 px-4 rounded-lg">
+    <div
+      class="w-full md:w-1/2 bg-[#4990c0] text-white p-4 sm:p-6 md:p-8 flex flex-col"
+    >
+      <div class="mb-4 md:mb-8 mt-2 md:mt-6">
+        <div
+          class="inline-block bg-white text-black py-1 sm:py-2 px-2 sm:px-4 rounded-lg"
+        >
           <div class="flex items-center">
             <svg
-              class="w-6 h-6 mr-2"
+              class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 mr-2"
               viewBox="0 0 24 24"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -49,32 +53,42 @@
                 stroke-linejoin="round"
               />
             </svg>
-            <span class="font-bold">TRACKIER demo</span>
+            <span class="text-xs sm:text-sm md:text-base font-bold"
+              >TRACKIER demo</span
+            >
           </div>
         </div>
       </div>
 
-      <div class="grow flex flex-col justify-center">
-        <h1 class="text-3xl font-bold mb-4">
+      <div class="grow flex flex-col justify-center py-2 md:py-0">
+        <h1
+          class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-2 md:mb-4"
+        >
           Access your TRACKIER demo Dashboard
         </h1>
-        <p class="text-lg">
+        <p class="text-xs sm:text-sm md:text-base lg:text-lg">
           Log in to manage your partnerships and track your earnings
           effortlessly.
         </p>
       </div>
 
-      <!-- Dashboard preview image -->
-      <div class="mt-8 mb-4">
+      <!-- Dashboard preview image - Hidden on extremely small screens -->
+      <div class="mt-2 mb-2 md:mt-4 md:mb-4 hidden sm:block">
         <div class="bg-white rounded-lg p-2 shadow-md">
           <div class="flex items-center bg-gray-100 mb-2">
             <div class="flex space-x-1 ml-2">
-              <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-              <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-              <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+              <div class="w-2 h-2 md:w-3 md:h-3 bg-red-500 rounded-full"></div>
+              <div
+                class="w-2 h-2 md:w-3 md:h-3 bg-yellow-500 rounded-full"
+              ></div>
+              <div
+                class="w-2 h-2 md:w-3 md:h-3 bg-green-500 rounded-full"
+              ></div>
             </div>
             <div class="flex-grow text-center">
-              <div class="w-24 h-4 bg-gray-300 mx-auto my-1 rounded"></div>
+              <div
+                class="w-16 md:w-24 h-2 md:h-3 bg-gray-300 mx-auto my-1 rounded"
+              ></div>
             </div>
             <div class="mr-2">×</div>
           </div>
@@ -82,18 +96,30 @@
           <div class="flex">
             <!-- Left sidebar in the preview -->
             <div
-              class="w-12 bg-[#1a1a47] h-48 flex flex-col items-center py-2 space-y-4"
+              class="w-6 md:w-10 lg:w-12 bg-[#1a1a47] h-24 md:h-36 lg:h-48 flex flex-col items-center py-2 space-y-3 md:space-y-4"
             >
-              <div class="w-6 h-6 bg-gray-300 rounded"></div>
-              <div class="w-6 h-6 bg-gray-300 rounded-full"></div>
-              <div class="w-6 h-6 bg-gray-300 rounded-full"></div>
-              <div class="w-6 h-6 bg-gray-300 rounded-full"></div>
-              <div class="w-6 h-6 bg-gray-300 rounded-full"></div>
+              <div
+                class="w-3 h-3 md:w-4 md:h-4 lg:w-6 lg:h-6 bg-gray-300 rounded"
+              ></div>
+              <div
+                class="w-3 h-3 md:w-4 md:h-4 lg:w-6 lg:h-6 bg-gray-300 rounded-full"
+              ></div>
+              <div
+                class="w-3 h-3 md:w-4 md:h-4 lg:w-6 lg:h-6 bg-gray-300 rounded-full"
+              ></div>
+              <div
+                class="w-3 h-3 md:w-4 md:h-4 lg:w-6 lg:h-6 bg-gray-300 rounded-full"
+              ></div>
+              <div
+                class="w-3 h-3 md:w-4 md:h-4 lg:w-6 lg:h-6 bg-gray-300 rounded-full"
+              ></div>
             </div>
 
             <!-- Main content area in the preview -->
             <div class="flex-grow p-2">
-              <div class="w-full h-10 bg-gray-200 rounded mb-4"></div>
+              <div
+                class="w-full h-6 md:h-8 lg:h-10 bg-gray-200 rounded mb-2 md:mb-4"
+              ></div>
             </div>
           </div>
         </div>
@@ -101,15 +127,19 @@
     </div>
 
     <!-- Right side - Login form -->
-    <div class="flex-1 bg-white p-8 flex flex-col justify-center">
-      <div class="max-w-md w-full mx-auto">
-        <h2 class="text-2xl font-semibold mb-8">Login</h2>
+    <div
+      class="w-full md:w-1/2 bg-white p-4 sm:p-6 md:p-8 flex flex-col justify-center"
+    >
+      <div class="w-full max-w-md mx-auto">
+        <h2 class="text-lg sm:text-xl md:text-2xl font-semibold mb-4 md:mb-6">
+          Login
+        </h2>
 
         <form on:submit|preventDefault={handleSubmit}>
-          <div class="mb-4">
+          <div class="mb-3 md:mb-4">
             <label
               for="email"
-              class="block text-sm font-medium text-gray-700 mb-1"
+              class="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
             >
               Email <span class="text-red-500">*</span>
             </label>
@@ -118,7 +148,7 @@
                 class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
               >
                 <svg
-                  class="h-5 w-5 text-gray-400"
+                  class="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 text-gray-400"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                   fill="currentColor"
@@ -133,16 +163,16 @@
                 id="email"
                 bind:value={email}
                 required
-                class="pl-10 block w-full rounded-md border-gray-300 shadow-sm py-2 px-3 border focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                class="pl-10 block w-full rounded-md border-gray-300 shadow-sm py-2 px-3 border text-xs sm:text-sm md:text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Email"
               />
             </div>
           </div>
 
-          <div class="mb-4">
+          <div class="mb-3 md:mb-4">
             <label
               for="password"
-              class="block text-sm font-medium text-gray-700 mb-1"
+              class="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
             >
               Password <span class="text-red-500">*</span>
             </label>
@@ -153,7 +183,7 @@
                   id="password"
                   bind:value={password}
                   required
-                  class="block w-full rounded-md border-gray-300 shadow-sm py-2 px-3 border focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  class="block w-full rounded-md border-gray-300 shadow-sm py-2 px-3 border text-xs sm:text-sm md:text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Password"
                 />
               {:else}
@@ -162,7 +192,7 @@
                   id="password"
                   bind:value={password}
                   required
-                  class="block w-full rounded-md border-gray-300 shadow-sm py-2 px-3 border focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  class="block w-full rounded-md border-gray-300 shadow-sm py-2 px-3 border text-xs sm:text-sm md:text-base focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Password"
                 />
               {/if}
@@ -174,7 +204,7 @@
                 {#if showPassword}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 text-gray-400"
+                    class="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 text-gray-400"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -190,7 +220,7 @@
                 {:else}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    class="h-5 w-5 text-gray-400"
+                    class="h-3 w-3 sm:h-4 sm:w-4 md:h-5 md:w-5 text-gray-400"
                     viewBox="0 0 20 20"
                     fill="currentColor"
                   >
@@ -206,13 +236,13 @@
             </div>
           </div>
 
-          <div class="mb-6 text-sm">
+          <div class="mb-4 md:mb-6 text-xs sm:text-sm">
             <a
               href="#forgot-password"
               class="text-blue-500 hover:text-blue-700 flex items-center"
             >
               <svg
-                class="w-4 h-4 mr-1"
+                class="w-3 h-3 sm:w-4 sm:h-4 mr-1"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -231,24 +261,24 @@
 
           <button
             type="submit"
-            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors"
+            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors text-xs sm:text-sm md:text-base"
           >
             Log In
           </button>
         </form>
 
-        <div class="mt-8">
+        <div class="mt-4 md:mt-6">
           <div class="flex items-center justify-center">
             <div class="border-t border-gray-300 flex-grow"></div>
-            <div class="mx-4 text-sm text-gray-500">or</div>
+            <div class="mx-4 text-xs sm:text-sm text-gray-500">or</div>
             <div class="border-t border-gray-300 flex-grow"></div>
           </div>
 
           <button
-            class="mt-6 w-full flex justify-center items-center bg-white border border-gray-300 rounded-md shadow-sm py-2 px-4 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            class="mt-3 md:mt-4 w-full flex justify-center items-center bg-white border border-gray-300 rounded-md shadow-sm py-2 px-4 text-xs sm:text-sm font-medium text-gray-700 hover:bg-gray-50"
           >
             <svg
-              class="w-5 h-5 mr-2"
+              class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 mr-2"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
             >
@@ -273,16 +303,21 @@
           </button>
         </div>
 
-        <div class="mt-8 text-center">
-          <p class="text-sm text-gray-600">Don't have an account?</p>
-          <div class="mt-3">
-            <a href="/#/signup" class="text-blue-500 hover:text-blue-700 font-medium">
+        <div class="mt-4 md:mt-6 text-center">
+          <p class="text-xs sm:text-sm text-gray-600">Don't have an account?</p>
+          <div class="mt-1 md:mt-2">
+            <a
+              href="/#/signup"
+              class="text-blue-500 hover:text-blue-700 font-medium text-xs sm:text-sm"
+            >
               Sign up
             </a>
           </div>
         </div>
 
-        <div class="mt-6 text-xs text-center text-gray-600">
+        <div
+          class="mt-3 md:mt-4 text-[10px] sm:text-xs text-center text-gray-600"
+        >
           <p>
             You must have <a href="#cookies" class="text-blue-500"
               >cookies enabled</a
@@ -294,3 +329,29 @@
     </div>
   </div>
 </div>
+
+<style>
+  /* For extremely small screens */
+  @media (max-width: 360px) {
+    /* .text-[10px] {
+      font-size: 9px;
+    } */
+  }
+
+  /* Make sure the container doesn't get too small on tiny screens */
+  @media (max-width: 320px) {
+    .min-h-screen {
+      min-height: calc(100vh - 10px);
+    }
+    .p-2 {
+      padding: 0.25rem;
+    }
+  }
+
+  /* Fix for large screens to prevent the form from getting too wide */
+  @media (min-width: 1440px) {
+    .max-w-7xl {
+      max-width: 80rem;
+    }
+  }
+</style>

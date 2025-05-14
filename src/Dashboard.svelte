@@ -13,12 +13,17 @@
 
   // Sidebar state
   let isSidebarCollapsed = false;
+  let isMobileSidebarOpen = false;
 
   // Current date range
   let dateRange = "2025-05-08 - 2025-05-14";
 
   function toggleSidebar() {
     isSidebarCollapsed = !isSidebarCollapsed;
+  }
+
+  function toggleMobileSidebar() {
+    isMobileSidebarOpen = !isMobileSidebarOpen;
   }
 
   // Dummy function for action buttons
@@ -33,6 +38,18 @@
   // Fetch data from JSONPlaceholder API
   onMount(async () => {
     try {
+      // Auto-collapse sidebar on small screens
+      if (window.innerWidth < 768) {
+        isSidebarCollapsed = true;
+      }
+
+      // Add event listener for window resize
+      window.addEventListener("resize", () => {
+        if (window.innerWidth < 768) {
+          isSidebarCollapsed = true;
+        }
+      });
+
       // Fetch posts
       const postsResponse = await fetch(
         "https://jsonplaceholder.typicode.com/posts?_limit=10"
@@ -47,13 +64,31 @@
       error = err.message;
       isLoading = false;
     }
+
+    return () => {
+      // Clean up event listeners
+      window.removeEventListener("resize");
+    };
   });
 </script>
 
-<div class="flex h-screen bg-gray-100">
+<div class="flex flex-col lg:flex-row h-screen bg-gray-100 overflow-hidden">
+  <!-- Mobile Sidebar Overlay -->
+  {#if isMobileSidebarOpen}
+    <div
+      class="fixed inset-0 bg-gray-600 bg-opacity-75 z-20 lg:hidden"
+      on:click={toggleMobileSidebar}
+    ></div>
+  {/if}
+
   <!-- Sidebar -->
   <div
-    class={`bg-[#3B83BD] text-white transition-all duration-300 ${isSidebarCollapsed ? "w-16" : "w-64"}`}
+    class={`
+        fixed inset-y-0 left-0 z-30 transform lg:relative lg:transform-none transition duration-300 ease-in-out
+        bg-[#3B83BD] text-white 
+        ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"} 
+        ${isSidebarCollapsed ? "w-20 lg:w-16" : "w-72 lg:w-64"}
+      `}
   >
     <!-- Logo -->
     <div class="flex items-center px-4 py-5">
@@ -86,8 +121,56 @@
       {/if}
     </div>
 
+    <!-- Login/Signup buttons visible in mobile sidebar -->
+    {#if !isSidebarCollapsed && isMobileSidebarOpen}
+      <div
+        class="px-4 py-3 border-t border-b border-blue-700 mb-2 flex flex-col space-y-2 lg:hidden"
+      >
+        <a
+          href="/#/login"
+          class="flex items-center px-2 py-2 bg-white text-blue-700 rounded-md hover:bg-gray-100 transition"
+        >
+          <svg
+            class="w-5 h-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+            ></path>
+          </svg>
+          <span class="font-medium">Login</span>
+        </a>
+        <a
+          href="/#/signup"
+          class="flex items-center px-2 py-2 bg-white text-blue-700 rounded-md hover:bg-gray-100 transition"
+        >
+          <svg
+            class="w-5 h-5 mr-2"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+            ></path>
+          </svg>
+          <span class="font-medium text-white">Signup</span>
+        </a>
+      </div>
+    {/if}
+
     <!-- Navigation -->
-    <nav class="mt-5 px-2">
+    <nav class="mt-5 px-2 overflow-y-auto h-[calc(100vh-10rem)]">
       <div>
         <a
           href="/"
@@ -360,20 +443,6 @@
           </svg>
           {#if !isSidebarCollapsed}
             <span class="ml-3">Customize</span>
-            <svg
-              class="ml-auto w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-              ></path>
-            </svg>
           {/if}
         </a>
 
@@ -449,7 +518,9 @@
     </nav>
 
     <!-- Collapse Button -->
-    <div class="mt-auto border-t border-blue-700 pt-2 pb-3 px-4">
+    <div
+      class="mt-auto border-t border-blue-700 pt-2 pb-3 px-4 hidden lg:block"
+    >
       <button
         on:click={toggleSidebar}
         class="flex items-center px-2 py-2 text-white hover:bg-blue-700 rounded-md w-full"
@@ -485,30 +556,56 @@
   </div>
 
   <!-- Main Content -->
-  <div class="flex-1 flex flex-col overflow-hidden">
+  <div class="flex-1 flex flex-col overflow-hidden w-full">
     <!-- Top Header -->
     <header class="bg-white shadow-sm">
-      <div class="flex justify-between items-center px-6 py-3">
-        <h1 class="text-xl font-semibold text-gray-800">Dashboard</h1>
-        <div class="flex items-center space-x-4">
-          <!-- Login and Signup Links -->
-          <a
-            href="/#/login"
-            class="text-gray-600 hover:text-gray-900 font-medium"
+      <div class="flex justify-between items-center px-4 sm:px-6 py-3">
+        <div class="flex items-center">
+          <!-- Mobile menu button -->
+          <button
+            class="inline-flex items-center justify-center p-2 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 lg:hidden"
+            on:click={toggleMobileSidebar}
           >
-            Login
-          </a>
-          <a
-            href="/#/signup"
-            class="text-gray-600 hover:text-gray-900 font-medium"
-          >
-            Signup
-          </a>
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </button>
+          <h1 class="text-xl font-semibold text-gray-800 ml-2 lg:ml-0">
+            Dashboard
+          </h1>
+        </div>
+        <div class="flex items-center space-x-2 sm:space-x-4">
+          <!-- Login and Signup buttons - Always visible in the header -->
+          <div class="flex space-x-1 sm:space-x-4">
+            <a
+              href="/#/login"
+              class="bg-blue-50 text-blue-700 px-2 sm:px-3 py-1.5 sm:py-2 rounded-md text-sm font-medium border border-blue-200 hover:bg-blue-100 transition"
+            >
+              Login
+            </a>
+            <a
+              href="/#/signup"
+              class="bg-blue-600 text-white px-2 sm:px-3 py-1.5 sm:py-2 rounded-md text-sm font-medium hover:bg-blue-700 transition"
+            >
+              Signup
+            </a>
+          </div>
 
-          <!-- Actions Dropdown -->
-          <div class="relative">
+          <!-- Actions Dropdown - Hidden on small screens -->
+          <div class="relative hidden sm:block">
             <button
-              class="flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+              class="flex items-center px-3 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition"
             >
               Actions
               <svg
@@ -523,26 +620,6 @@
                   stroke-linejoin="round"
                   stroke-width="2"
                   d="M19 9l-7 7-7-7"
-                ></path>
-              </svg>
-            </button>
-          </div>
-
-          <!-- Search -->
-          <div>
-            <button class="text-gray-500 hover:text-gray-700">
-              <svg
-                class="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 ></path>
               </svg>
             </button>
@@ -590,12 +667,14 @@
     </header>
 
     <!-- Main Content Area -->
-    <main class="flex-1 overflow-y-auto bg-gray-100 p-6">
+    <main class="flex-1 overflow-y-auto bg-gray-100 p-4 sm:p-6">
       <!-- Performance Report Section -->
       <div class="bg-white shadow rounded-lg mb-6 p-4">
-        <div class="flex justify-between items-center mb-4">
+        <div
+          class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 space-y-3 sm:space-y-0"
+        >
           <h2 class="text-lg font-medium text-gray-800">PERFORMANCE REPORT</h2>
-          <div class="flex space-x-2">
+          <div class="w-full sm:w-auto">
             <div class="relative">
               <input
                 type="text"
@@ -627,21 +706,23 @@
 
         <!-- Performance Content Here (Placeholder) -->
         <div
-          class="h-64 flex items-center justify-center border border-gray-200 rounded-lg bg-gray-50"
+          class="h-48 sm:h-64 flex items-center justify-center border border-gray-200 rounded-lg bg-gray-50"
         >
           <p class="text-gray-500">Performance graph would appear here</p>
         </div>
       </div>
 
       <!-- Metrics Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6"
+      >
         <!-- Clicks -->
         <div class="bg-white shadow rounded-lg overflow-hidden">
           <div class="p-4 border-b border-gray-200">
             <div class="flex items-center">
               <div class="flex-shrink-0 bg-gray-100 rounded-full p-3">
                 <svg
-                  class="w-6 h-6 text-gray-500"
+                  class="w-5 h-5 sm:w-6 sm:h-6 text-gray-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -655,25 +736,29 @@
                   ></path>
                 </svg>
               </div>
-              <h3 class="ml-3 text-lg font-medium text-gray-900">CLICKS</h3>
+              <h3 class="ml-3 text-base sm:text-lg font-medium text-gray-900">
+                CLICKS
+              </h3>
             </div>
           </div>
           <div class="grid grid-cols-3 divide-x divide-gray-200">
-            <div class="p-4 text-center">
-              <p class="text-sm font-medium text-gray-500">Today</p>
-              <p class="mt-1 text-3xl font-semibold text-blue-600">
+            <div class="p-3 sm:p-4 text-center">
+              <p class="text-xs sm:text-sm font-medium text-gray-500">Today</p>
+              <p class="mt-1 text-xl sm:text-3xl font-semibold text-blue-600">
                 {clicks.today}
               </p>
             </div>
-            <div class="p-4 text-center">
-              <p class="text-sm font-medium text-gray-500">Yesterday</p>
-              <p class="mt-1 text-3xl font-semibold text-blue-600">
+            <div class="p-3 sm:p-4 text-center">
+              <p class="text-xs sm:text-sm font-medium text-gray-500">
+                Yesterday
+              </p>
+              <p class="mt-1 text-xl sm:text-3xl font-semibold text-blue-600">
                 {clicks.yesterday}
               </p>
             </div>
-            <div class="p-4 text-center">
-              <p class="text-sm font-medium text-gray-500">MTD</p>
-              <p class="mt-1 text-3xl font-semibold text-blue-600">
+            <div class="p-3 sm:p-4 text-center">
+              <p class="text-xs sm:text-sm font-medium text-gray-500">MTD</p>
+              <p class="mt-1 text-xl sm:text-3xl font-semibold text-blue-600">
                 {clicks.mtd}
               </p>
             </div>
@@ -686,7 +771,7 @@
             <div class="flex items-center">
               <div class="flex-shrink-0 bg-gray-100 rounded-full p-3">
                 <svg
-                  class="w-6 h-6 text-gray-500"
+                  class="w-5 h-5 sm:w-6 sm:h-6 text-gray-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -700,27 +785,29 @@
                   ></path>
                 </svg>
               </div>
-              <h3 class="ml-3 text-lg font-medium text-gray-900">
+              <h3 class="ml-3 text-base sm:text-lg font-medium text-gray-900">
                 CONVERSIONS
               </h3>
             </div>
           </div>
           <div class="grid grid-cols-3 divide-x divide-gray-200">
-            <div class="p-4 text-center">
-              <p class="text-sm font-medium text-gray-500">Today</p>
-              <p class="mt-1 text-3xl font-semibold text-blue-600">
+            <div class="p-3 sm:p-4 text-center">
+              <p class="text-xs sm:text-sm font-medium text-gray-500">Today</p>
+              <p class="mt-1 text-xl sm:text-3xl font-semibold text-blue-600">
                 {conversions.today}
               </p>
             </div>
-            <div class="p-4 text-center">
-              <p class="text-sm font-medium text-gray-500">Yesterday</p>
-              <p class="mt-1 text-3xl font-semibold text-blue-600">
+            <div class="p-3 sm:p-4 text-center">
+              <p class="text-xs sm:text-sm font-medium text-gray-500">
+                Yesterday
+              </p>
+              <p class="mt-1 text-xl sm:text-3xl font-semibold text-blue-600">
                 {conversions.yesterday}
               </p>
             </div>
-            <div class="p-4 text-center">
-              <p class="text-sm font-medium text-gray-500">MTD</p>
-              <p class="mt-1 text-3xl font-semibold text-blue-600">
+            <div class="p-3 sm:p-4 text-center">
+              <p class="text-xs sm:text-sm font-medium text-gray-500">MTD</p>
+              <p class="mt-1 text-xl sm:text-3xl font-semibold text-blue-600">
                 {conversions.mtd}
               </p>
             </div>
@@ -728,12 +815,14 @@
         </div>
 
         <!-- Impressions -->
-        <div class="bg-white shadow rounded-lg overflow-hidden">
+        <div
+          class="bg-white shadow rounded-lg overflow-hidden sm:col-span-2 lg:col-span-1"
+        >
           <div class="p-4 border-b border-gray-200">
             <div class="flex items-center">
               <div class="flex-shrink-0 bg-gray-100 rounded-full p-3">
                 <svg
-                  class="w-6 h-6 text-gray-500"
+                  class="w-5 h-5 sm:w-6 sm:h-6 text-gray-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -753,27 +842,29 @@
                   ></path>
                 </svg>
               </div>
-              <h3 class="ml-3 text-lg font-medium text-gray-900">
+              <h3 class="ml-3 text-base sm:text-lg font-medium text-gray-900">
                 IMPRESSIONS
               </h3>
             </div>
           </div>
           <div class="grid grid-cols-3 divide-x divide-gray-200">
-            <div class="p-4 text-center">
-              <p class="text-sm font-medium text-gray-500">Today</p>
-              <p class="mt-1 text-3xl font-semibold text-blue-600">
+            <div class="p-3 sm:p-4 text-center">
+              <p class="text-xs sm:text-sm font-medium text-gray-500">Today</p>
+              <p class="mt-1 text-xl sm:text-3xl font-semibold text-blue-600">
                 {impressions.today}
               </p>
             </div>
-            <div class="p-4 text-center">
-              <p class="text-sm font-medium text-gray-500">Yesterday</p>
-              <p class="mt-1 text-3xl font-semibold text-blue-600">
+            <div class="p-3 sm:p-4 text-center">
+              <p class="text-xs sm:text-sm font-medium text-gray-500">
+                Yesterday
+              </p>
+              <p class="mt-1 text-xl sm:text-3xl font-semibold text-blue-600">
                 {impressions.yesterday}
               </p>
             </div>
-            <div class="p-4 text-center">
-              <p class="text-sm font-medium text-gray-500">MTD</p>
-              <p class="mt-1 text-3xl font-semibold text-blue-600">
+            <div class="p-3 sm:p-4 text-center">
+              <p class="text-xs sm:text-sm font-medium text-gray-500">MTD</p>
+              <p class="mt-1 text-xl sm:text-3xl font-semibold text-blue-600">
                 {impressions.mtd}
               </p>
             </div>
@@ -785,10 +876,10 @@
       <div class="flex justify-center mb-6">
         <button
           on:click={customizeWidgets}
-          class="flex items-center px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"
+          class="flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition text-sm sm:text-base"
         >
           <svg
-            class="w-5 h-5 mr-2"
+            class="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -808,7 +899,7 @@
       <!-- JsonPlaceholder API Data -->
       <div class="bg-white shadow rounded-lg mb-6">
         <div class="p-4 border-b border-gray-200">
-          <h2 class="text-lg font-medium text-gray-800">
+          <h2 class="text-base sm:text-lg font-medium text-gray-800">
             JSONPlaceholder API Data
           </h2>
         </div>
@@ -817,20 +908,22 @@
         {#if isLoading}
           <div class="p-8 flex justify-center">
             <div
-              class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-500 border-r-transparent align-[-0.125em]"
+              class="inline-block h-6 w-6 sm:h-8 sm:w-8 animate-spin rounded-full border-4 border-solid border-blue-500 border-r-transparent align-[-0.125em]"
             ></div>
-            <span class="ml-3 text-gray-600">Loading data...</span>
+            <span class="ml-3 text-sm sm:text-base text-gray-600"
+              >Loading data...</span
+            >
           </div>
         {/if}
 
         <!-- Error State -->
         {#if error}
-          <div class="p-8 text-center">
+          <div class="p-6 sm:p-8 text-center">
             <div
-              class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-100 text-red-500 mb-4"
+              class="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-red-100 text-red-500 mb-4"
             >
               <svg
-                class="w-6 h-6"
+                class="w-5 h-5 sm:w-6 sm:h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -845,9 +938,9 @@
               </svg>
             </div>
             <p class="text-red-500 font-medium">Error loading data</p>
-            <p class="mt-1 text-gray-500">{error}</p>
+            <p class="mt-1 text-sm text-gray-500">{error}</p>
             <button
-              class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200"
+              class="mt-4 inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200"
               on:click={() => window.location.reload()}
             >
               Try Again
@@ -858,54 +951,84 @@
         <!-- Data Display -->
         {#if posts.length > 0 && !isLoading && !error}
           <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th
-                    scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >ID</th
-                  >
-                  <th
-                    scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >Title</th
-                  >
-                  <th
-                    scope="col"
-                    class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                    >Body</th
-                  >
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
-                {#each posts as post}
-                  <tr>
-                    <td
-                      class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
-                      >{post.id}</td
-                    >
-                    <td class="px-6 py-4 text-sm text-gray-500">{post.title}</td
-                    >
-                    <td
-                      class="px-6 py-4 text-sm text-gray-500 truncate max-w-md"
-                      >{post.body}</td
-                    >
-                  </tr>
-                {/each}
-              </tbody>
-            </table>
+            <div class="inline-block min-w-full align-middle">
+              <div
+                class="overflow-hidden border-b border-gray-200 sm:rounded-lg"
+              >
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th
+                        scope="col"
+                        class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >ID</th
+                      >
+                      <th
+                        scope="col"
+                        class="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >Title</th
+                      >
+                      <th
+                        scope="col"
+                        class="hidden sm:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                        >Body</th
+                      >
+                    </tr>
+                  </thead>
+                  <tbody class="bg-white divide-y divide-gray-200">
+                    {#each posts as post}
+                      <tr>
+                        <td
+                          class="px-4 sm:px-6 py-3 whitespace-nowrap text-xs sm:text-sm font-medium text-gray-900"
+                          >{post.id}</td
+                        >
+                        <td
+                          class="px-4 sm:px-6 py-3 text-xs sm:text-sm text-gray-500"
+                          >{post.title}</td
+                        >
+                        <td
+                          class="hidden sm:table-cell px-6 py-3 text-xs sm:text-sm text-gray-500 truncate max-w-xs"
+                          >{post.body}</td
+                        >
+                      </tr>
+                    {/each}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile view for post details -->
+          <div class="block sm:hidden p-4">
+            <h3 class="text-sm font-medium text-gray-700 mb-2">
+              Post Details (Mobile View)
+            </h3>
+            {#each posts as post}
+              <div class="bg-gray-50 p-3 rounded mb-3">
+                <div class="flex justify-between">
+                  <span class="font-medium text-gray-700">ID: {post.id}</span>
+                </div>
+                <div class="mt-1">
+                  <p class="text-xs font-medium">Title:</p>
+                  <p class="text-xs text-gray-600">{post.title}</p>
+                </div>
+                <div class="mt-2">
+                  <p class="text-xs font-medium">Body:</p>
+                  <p class="text-xs text-gray-600 line-clamp-2">{post.body}</p>
+                </div>
+              </div>
+            {/each}
           </div>
         {/if}
 
         <!-- Empty State -->
         {#if posts.length === 0 && !isLoading && !error}
-          <div class="p-8 text-center">
+          <div class="p-6 sm:p-8 text-center">
             <div
-              class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 text-gray-500 mb-4"
+              class="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 text-gray-500 mb-4"
             >
               <svg
-                class="w-6 h-6"
+                class="w-5 h-5 sm:w-6 sm:h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -920,7 +1043,7 @@
               </svg>
             </div>
             <p class="text-gray-500 font-medium">No posts found</p>
-            <p class="mt-1 text-gray-500">
+            <p class="mt-1 text-xs sm:text-sm text-gray-500">
               There are no posts available right now.
             </p>
           </div>
@@ -930,12 +1053,12 @@
   </div>
 
   <!-- Chat Support Button (Fixed) -->
-  <div class="fixed bottom-6 right-6">
+  <div class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6">
     <button
-      class="bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors"
+      class="bg-blue-600 text-white rounded-full w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center shadow-lg hover:bg-blue-700 transition-colors"
     >
       <svg
-        class="w-6 h-6"
+        class="w-5 h-5 sm:w-6 sm:h-6"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
